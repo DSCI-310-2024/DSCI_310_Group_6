@@ -40,7 +40,7 @@ _add or remove dependencies based on our specific analysis needs or changes._
 
 This project is licensed under the following:
 
-- [MIT License](./LICENSE). - contained in `LICENSE.md`
+- [MIT License](./LICENSE.md). - contained in `LICENSE.md`
 
 _Please refer to `LICENSE.md` for detailed licensing information._
 
