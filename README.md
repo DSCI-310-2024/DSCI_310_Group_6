@@ -8,8 +8,7 @@
 
 ## Project Summary
 
-_temporarily blank_
-
+This project aims to analyze the Wine Quality dataset, focusing on the characteristics that influence the quality of red and white Vinho Verde wines from northern Portugal. Through a comprehensive data analysis process using R, our team will explore physicochemical and sensory variables to understand their impact on wine quality. The goal is to identify key factors that contribute to the classification of wine quality and to predict the quality of wine samples effectively. Our approach will be rooted in reproducible and trustworthy workflows, ensuring that our findings are both reliable and accessible.
 
 ## How to Run This Analysis
 
