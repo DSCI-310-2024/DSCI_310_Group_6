@@ -20,9 +20,9 @@ To execute our data analysis, follow these steps:
    ```
 2. Launch JupyterLab either through Git or terminal on your computer.
 
-3. Navigate to the directory where `<analysis>.ipynb` is located.
+3. Navigate to the directory where `Wine.ipynb` is located.
 
-4. Open the `<analysis>.ipynb` file in JupyterLab to access the analysis and execute the code.
+4. Open the `Wine.ipynb` file in JupyterLab to access the analysis and execute the code.
 
 _add or remove steps based on the changes we make in the project._
 
