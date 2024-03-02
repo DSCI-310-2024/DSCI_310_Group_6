@@ -20,9 +20,9 @@ To execute our data analysis, follow these steps:
    ```
 2. Launch JupyterLab either through Git or terminal on your computer.
 
-3. Navigate to the directory where `<analysis>.ipynb` is located.
+3. Navigate to the directory where `Wine.ipynb` is located.
 
-4. Open the `<analysis>.ipynb` file in JupyterLab to access the analysis and execute the code.
+4. Open the `Wine.ipynb` file in JupyterLab to access the analysis and execute the code.
 
 _add or remove steps based on the changes we make in the project._
 
@@ -50,4 +50,4 @@ This project utilizes the UCI Machine Learning Repository Wine Quality (https://
 
 ## Goal of Analysis
 
-_temporarily blank_
+Our analysis aims to unravel the intricate relationship between the physicochemical properties of wine—specifically pH, residual sugar, chlorides, and sulphates—and their impact on the sensory quality ratings of red and white Vinho Verde wines. By assessing how these selected properties influence the wine's sensory perception, our objective is to quantify their collective impact on wine quality. This seeks not only to provide actionable insights for winemakers to enhance production processes but also to offer guidance to consumers in making informed wine selections. Additionally, our analysis aims to contribute to the academic field of oenology by advancing the understanding of how wine's chemical composition correlates with its perceived quality. Through this approach, we aim to highlight the physicochemical traits that are pivotal in determining high-quality wine, thereby aiding in the optimization of wine production and enriching the overall wine experience for both producers and consumers.
