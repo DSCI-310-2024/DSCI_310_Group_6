@@ -12,19 +12,54 @@ This project aims to analyze the Wine Quality dataset, focusing on the character
 
 ## How to Run This Analysis
 
-To execute our data analysis, follow these steps:
+### Prerequisites
 
-1. **Clone the Repository**: Clone this repository to your local machine to get started.
+- Ensure you have R installed on your system. The project was developed using R version 4.3.2. You can download R from [The Comprehensive R Archive Network (CRAN)](https://cran.r-project.org/).
+
+### Installing `renv`
+
+If you haven't already installed `renv`, you can do so by running the following command in your R console:
+
+```R
+install.packages("renv")
+```
+
+### Setting Up the Environment
+
+1. **Clone the Repository**: If you haven't already, clone the project repository to your local machine using the following command in your terminal:
+
    ```
    git clone https://github.com/DSCI-310-2024/DSCI_310_Group_6.git
    ```
-2. Launch JupyterLab either through Git or terminal on your computer.
 
-3. Navigate to the directory where `Wine.ipynb` is located.
+2. **Navigate to the Project Directory**: Change your directory to the cloned repository:
 
-4. Open the `Wine.ipynb` file in JupyterLab to access the analysis and execute the code.
+   ```
+   cd DSCI_310_Group_6
+   ```
 
-_add or remove steps based on the changes we make in the project._
+3. **Initialize `renv`**: Start the R console in the project directory, then initialize `renv` to install all necessary packages and dependencies:
+
+   ```R
+   renv::restore()
+   ```
+
+   This command will read the `renv.lock` file in your project directory and install the R packages and versions specified therein.
+
+### Running the Analysis
+
+Once the environment is set up, you can run the analysis by opening the `Wine.ipynb` file in JupyterLab or an equivalent R environment that supports Jupyter notebooks. Ensure you have JupyterLab installed and configured to use the R kernel.
+
+### Updating the Environment
+
+If you install any new R packages or update existing ones, you should update the `renv.lock` file to reflect these changes. This can be done by running the following command in your R console:
+
+```R
+renv::snapshot()
+```
+
+This command updates the `renv.lock` file, ensuring that other contributors can replicate your environment accurately.
+
 
 ## Dependencies
 
