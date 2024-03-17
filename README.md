@@ -71,6 +71,7 @@ This project relies on several R packages for data manipulation, analysis, and v
 - tidyr
 - ggplot
 - docopt
+- broom
 
 ## Licenses
 
