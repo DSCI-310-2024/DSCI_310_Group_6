@@ -1,0 +1,10 @@
+services:
+  analysis-env:
+    image: felix12342/dsci310-dockerfile-milestone2:latest
+    ports:
+      - "8787:8787"
+    volumes:
+      - .:/home/rstudio/project
+    environment:
+      PASSWORD: password
+    platform: linux/amd64
