@@ -71,6 +71,11 @@ This project relies on several R packages for data manipulation, analysis, and v
 - tidyr
 - ggplot
 - docopt
+- broom
+
+## How to Use the Docker Container
+Before using the container, firstly please install and launch Docker on your computer. The Docker image used for this project is based on the quay.io/jupyter/r-notebook:r-4.3.3 image. Additional information can be found in the `Dockerfile`.
+
 
 ## Licenses
 
