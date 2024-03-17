@@ -73,6 +73,10 @@ This project relies on several R packages for data manipulation, analysis, and v
 - docopt
 - broom
 
+## How to Use the Docker Container
+Before using the container, firstly please install and launch Docker on your computer. The Docker image used for this project is based on the quay.io/jupyter/minimal-notebook:notebook-7.0.6 image. Additional dependencies are specified int the Dockerfile.
+
+
 ## Licenses
 
 This project is licensed under the following:
