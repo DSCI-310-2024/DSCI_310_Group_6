@@ -1,0 +1,280 @@
+---
+title: "Predicting Wine Quality: Insights from Physicochemical Properties  \U0001F377"
+jupyter: ir
+author: "Felix Li, Gurman Gill, Dia Zavery, Steve He"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+  pdf:
+    toc: true
+    toc-depth: 2
+execute:
+  echo: false
+  warning: false
+bibliography: references.bib
+---
+
+
+## **1. Summary**
+This analysis project attempted to explore the predictive relationships between the physicochemical properties of wine and its quality, utilizing regression analysis and a forward selection algorithm to identify key predictors. Our investigation was motivated by the wine industry's increasing reliance on data analysis and machine learning to enhance wine quality assessments, aiming to decode the complex interplay between a wine's chemical makeup and its sensory appeal. Despite the sophisticated methodology and the comprehensive dataset from the UCI Machine Learning Repository [@cortez2009wine], our findings revealed the model's limited predictive capability, with a low R-squared value highlighting a significant portion of unexplained variability in wine quality. This outcome, while not entirely unexpected given the nuanced nature of wine quality determination, shows the limitations of linear regression models in capturing the intricate factors that influence wine quality. The analysis points to potential areas for improvement, such as incorporating more or better-quality data, considering additional variables, and employing more complex modeling techniques. Our study thus not only contributes to the academic discourse on predictive modeling in the wine industry but also sets the stage for future research that could leverage advanced analytics to unravel the complexities of wine quality assessment, supporting the industry's pursuit of excellence and innovation in wine production and evaluation.
+
+## **2. Introduction**
+
+Wine has been a symbol of culture and refinement throughout human history, with its production dating back thousands of years. The complexity of wine, influenced by its physicochemical properties [@jjbuckley2018factors], has fascinated scientists and winemakers alike. In recent years, the wine industry has increasingly turned to data analysis and machine learning to understand and predict wine quality. This scientific approach aims to decode the relationship between the chemical composition of wine and its quality as perceived by consumers.
+
+In this project, our primary goal was to determine the best regression model for predicting wine quality and to identify which factors most effectively predict it. The quality of wine is a subject of interest for both enthusiasts and professionals in the field, as it can vary significantly based on a variety of measurable physicochemical properties. By applying regression analysis, we aimed to uncover the relationships between these properties and wine quality, thereby providing a predictive model that could be useful for winemakers and consumers alike. Our research question was formulated as follows: **"What is the best regression model to predict wine quality?"**
+
+To address this question, we utilized a dataset that comes from the UCI Machine Learning Repository [@cortez2009wine], featuring two datasets related to red and white variants of the Portuguese "Vinho Verde" wine. These datasets include 4,898 instances, with 11 features covering various physicochemical properties (such as acidity, sugar level, alcohol content) and 1 output variable representing sensory quality ratings on a scale. The datasets present an opportunity for both classification and regression analyses to model wine quality based on these properties.
+
+Our approach involved conducting a comprehensive analysis to explore the relationships between the physicochemical attributes and the quality scores. Through the use of regression analysis and the implementation of a forward selection algorithm, we aimed to identify the most significant predictors of wine quality. This process allowed us to not only pinpoint the factors that have the most substantial impact on quality but also to determine the most accurate regression model for predicting the quality scores of wine based on its properties.
+
+## **3. Methods and Results**
+
+### 3.1 Data Cleaning and Wrangling 
+
+```{r echo=FALSE, include=FALSE, message=FALSE}
+library(tidyverse)
+library(dplyr)
+library(GGally)
+install.packages("rsample", quietly = TRUE)
+library(rsample)
+install.packages("leaps", quietly = TRUE)
+library(leaps)
+install.packages("Metrics", quietly = TRUE)
+library(Metrics)
+install.packages("yardstick", quietly = TRUE)
+library(yardstick)
+```
+
+```{r echo=FALSE, include=FALSE}
+#| vscode: {languageId: r}
+library(tidyverse)
+library(dplyr)
+library(GGally)
+```
+
+```{r echo=FALSE}
+#| label: tbl-winedata
+#| tbl-cap: "Glimpse at Wine Data"
+#| vscode: {languageId: r}
+wine_data <- read.csv("data/winequality-red.csv",sep = ";")
+```
+
+```{r echo=FALSE}
+#| vscode: {languageId: r}
+levels(as.factor(wine_data$quality))
+```
+
+```{r echo=FALSE}
+#| vscode: {languageId: r}
+data2 <- wine_data %>%
+  mutate(quality = ifelse(quality <= 5, "bad", "good"))
+```
+
+### 3.2 Exploratory data analysis (EDA)
+
+```{r echo=FALSE}
+#| label: fig-winedist
+#| fig-cap: "Distribution of Wine Quality"
+#| warning: false
+# options(repr.plot.width=10, repr.plot.height=6)
+Price_distribution_plot <- ggplot(wine_data, aes(x = quality)) + 
+  geom_histogram(fill = "steelblue", color = "white", bins = 15) + 
+  geom_vline(xintercept = mean(wine_data$quality, na.rm = TRUE),
+             col = "red", size = 1) +
+  geom_text(aes(x = 6, y =800, label = "average quality"), color = "red") +
+  labs(x = "wine quality", y = "count") 
+
+Price_distribution_plot
+```
+
+```{r echo=FALSE}
+#| label: fig-facetwine
+#| fig-cap: "Scatter plots of Wine Quality against Physiochemical Properties"
+#| warning: false
+long_wine_data <- wine_data %>%
+  pivot_longer(cols = -quality, names_to = "Variable", values_to = "Value")
+
+ggplot(long_wine_data, aes(x = Value, y = quality)) +
+  geom_point(aes(color = Variable), alpha = 0.5) +
+  geom_smooth(se = FALSE, method = "lm") +
+  facet_wrap(~ Variable, scales = "free_x") +
+  labs(x = "Variable Value",
+       y = "Quality") +
+  theme_minimal()
+```
+
+```{r echo=FALSE}
+#| label: fig-facetcorr
+#| fig-cap: "Correlation between pairs of variables in the Wine dataset"
+#| warning: false
+#| vscode: {languageId: r}
+options(repr.plot.width = 15, repr.plot.height = 12)
+
+correlation_plots <- wine_data %>%
+  select(- quality) %>%
+  ggpairs(progress = FALSE) +
+  theme(
+    text = element_text(size = 15),
+    plot.title = element_text(face = "bold"),
+    axis.title = element_text(face = "bold"),
+    plot.caption = element_text(color = "darkgrey", size = 18, hjust = 0.5, vjust = 1)
+  ) + 
+  labs(caption = "Figure 1.1: Relationships between pairs of variables in Wine data set.")
+  
+  
+correlation_plots
+```
+
+
+From @fig-facetcorr above, we notice that there are some variables that has high correlation with others:
+- citric.acid and fixed acidity
+- PH and citric.acid
+- density and fixed acidity
+- free.sulfur.dioxide and total.sulfur.dioxide
+
+In order to prevent multicollinearity, we decide to remove citric.acid, density and free.sulfur.dioxide 
+
+```{r echo=FALSE, tbl.cap="Table 2: Modified Table with Selected Variables"}
+#| label: tbl-newdata
+#| tbl-cap: "Modified Table with Selected Variables"
+#| warning: false
+#| vscode: {languageId: r}
+model_data <- subset(wine_data, select = -c(citric.acid,density,free.sulfur.dioxide))
+head(model_data) 
+```
+
+### **3.3 Method**
+
+```{r echo=FALSE}
+#| label: tbl-splitdata
+#| tbl-cap: "Training data"
+#| warning: false
+#| vscode: {languageId: r}
+set.seed(100) # set seed
+# Splitting the data into two sets: 60% training and 40% testing
+data_split_train <- initial_split(model_data, prop = 0.6)
+data_train <- training(data_split_train)  # Training set
+data_test <- testing(data_split_train)  # Training set
+
+
+head(data_train)
+```
+
+In order to select the best LR model, we will use forward selection because it enables a more efficient selection process than a process such as backward selection. To begin, we will split our data into training data as you can see from @tbl-splitdata and testing data. To apply forward stepwise selection, we will start with the intercept-only model, select and add variables sequentially, and finally select the best model of the p models, where p = number of predictor variables. The “best” model can be defined by metrics such as the test MSE which can be revealed with Cp or BIC or adjusted $R^2$ for predictive model selection. Specifically, we can look for the model with biggest adjusted $R^2$, which indicates a stronger out-of-sample prediction accuracy.
+
+We will obtain 8 possible models obtained using forward selection method.
+
+```{r echo=FALSE}
+forward <- regsubsets(
+  x = quality ~ ., nvmax = 8,
+  data = data_train,
+  method = "forward",
+)
+
+forward_summary <- summary(forward)
+
+```
+
+```{r echo=FALSE, tbl.cap="Table 3: Summary of Forward Selection Algorithm Results", tbl.id='forward-selection'}
+#| label: tbl-summaryfsa
+#| tbl-cap: "Summary of Forward Selection Algorithm Results"
+#| warning: false
+#| vscode: {languageId: r}
+forward_summary_df <- tibble(
+    n_input_variables = 1:8, 
+    RSQ = forward_summary$rsq,
+    RSS = forward_summary$rss,
+    ADJ.R2 = forward_summary$adjr2,
+)
+forward_summary_df
+```
+
+From @tbl-summaryfsa, the adjusted $R^2$ will start decreasing after 14 variables are selected. 
+Hence we will be using the model with 7 variables which you can find below.
+
+```{r echo=FALSE}
+selected_var <- names(coef(forward, 7))[-1] 
+selected_var
+```
+
+```{r echo=FALSE}
+#subset only the predictors selected from the full dataset.
+training <- data_train %>% select(all_of(selected_var),quality)
+testing <- data_test %>% select(all_of(selected_var),quality)
+```
+
+```{r echo=FALSE}
+model <- lm(quality ~ .,
+data = training
+)
+```
+
+```{r echo=FALSE}
+#| label: tbl-predictionquality
+#| tbl-cap: "Predicted vs. Actual Quality of Wine"
+#| warning: false
+#| vscode: {languageId: r}
+select_pred <- predict(model, newdata = data_test) %>%
+    bind_cols(data_test)  
+df <- select_pred %>% 
+     rename(predictedQuality = `...1`) %>%
+     select(predictedQuality, quality) %>%
+     head()
+df
+```
+
+```{r echo=FALSE}
+#| label: tbl-predictionmetrics
+#| tbl-cap: "Model Evaluation Metrics"
+#| warning: false
+#| vscode: {languageId: r}
+## evaluate our final model
+prediction_accuracy <- df %>%
+       metrics(truth = quality, estimate = predictedQuality) 
+
+prediction_accuracy
+```
+
+```{r echo=FALSE}
+#| label: fig-scatter
+#| fig-cap: "Scatter Plot of Actual vs. Predicted Wine Quality"
+#| warning: false
+#| vscode: {languageId: r}
+ggplot(df, aes(x = quality, y = predictedQuality)) +
+  geom_point(color = 'blue', alpha = 0.6) +  # Plot the points
+  geom_smooth(method = 'lm', color = 'red', se = FALSE) +  # Add a linear regression line
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "darkgreen") + # Line y = x for reference
+  labs(x = "Actual Quality", y = "Predicted Quality", title = "Actual vs. Predicted Wine Quality") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+## **4. Discussion**
+
+### 4.1. Summary and Expectations
+The analysis employed regression analysis and a forward selection algorithm to identify key predictors of wine quality. The process began with splitting the data into training and testing sets, followed by applying forward stepwise selection to sequentially add variables and select the best model based on metrics such as adjusted R², indicating out-of-sample prediction accuracy. This method aimed to pinpoint the most significant factors affecting wine quality and determine the most accurate regression model for predicting quality scores based on wine properties.
+The results from the model suggest that it has limited predictive power. The R-squared value as shown in @tbl-predictionmetrics indicates that only about 4.9% of the variability in wine quality can be explained by the model, which is quite low. This means that there's a lot of unexplained variability, and the model might not be capturing all the factors that influence wine quality. The root mean square error (rmse) of around 1.096 and the mean absolute error (mae) of approximately 0.854 indicate that on average, the model's predictions deviate from the actual quality values by about one point on the quality scale. These metrics together suggest the model's predictions are not very accurate and there's substantial room for improvement.
+The outcome of the regression plot suggests that the model does not perform as well as expected, especially at the higher end of the actual quality scores. 
+The model seems to underestimate the quality of higher-quality wines and overestimate the quality of lower-quality wines. This could indicate that the model's assumptions or the linearity of the predictors do not hold across the entire range of the quality scores.
+This may be due to several reasons:
+
+**Model Complexity**: The model might be too simple (underfitting), not capturing the complex relationships between predictors and wine quality.
+
+**Predictor Selection**: The forward selection algorithm may not have included all relevant predictors, or it may have included irrelevant or noisy predictors.
+
+**Data Quality and Quantity**: If the data has errors, outliers, or there's not enough data, the model's predictions can be affected. The dataset may also be imbalanced with respect to the quality scores, affecting prediction for underrepresented scores.
+
+**Non-linear Relationships**: The relationship between predictors and response may be non-linear or might involve interactions that the linear model does not capture.
+
+In summary the low R-squared could have been expected given the complex nature of wine quality assessment, which is influenced by numerous subtle factors that may not be captured by the model. Improving the model would likely involve incorporating more or better-quality data, considering additional variables, and possibly using more complex modeling techniques that can handle the interplay of factors affecting wine quality.
+
+### 4.2. Impact and Future Questions
+
+**Impact:**
+The implications of this analysis extend beyond its immediate academic context, shedding light on the inherent complexities of predicting wine quality through quantitative models. Despite the model's limited predictive power, as evidenced by a low R-squared value and substantial prediction errors as seen in @tbl-predictionmetrics and @tbl-predictionquality, this analysis shows the multifaceted nature of wine quality assessment, which is influenced by a myriad of subtle factors not easily quantifiable. From a practical standpoint, the study highlights the challenges faced by quality assessors in standardizing wine quality metrics, suggesting that reliance on quantitative models alone may not suffice for capturing the nuanced essence of wine quality. Moreover, the findings advocate for a more holistic approach in wine quality evaluation, one that perhaps integrates both objective measurements and subjective expertise. For the wine industry, embracing such complexities and exploring advanced modeling techniques could pave the way for more nuanced quality assessment methods, potentially leading to improved product differentiation and marketing strategies. Ultimately, this analysis serves as a stepping point for future research aimed at refining the predictive accuracy of wine quality models, encouraging a multidisciplinary approach that encompasses sensory analysis, chemistry, and consumer preferences to better understand the determinants of wine quality.
+
+**Future Questions:**
+Building on our initial analysis, future research could explore the impact of environmental changes like climate on the physicochemical composition of wine, delve into the genetic factors influencing grape quality, and employ advanced machine learning algorithms to uncover complex relationships between wine characteristics and sensory perceptions. Specifically, alternative data analysis methods such as deep learning and neural networks [@pascua2023combined] could be employed to analyze large datasets more effectively, identifying non-linear relationships and subtle patterns that traditional statistical methods may miss. Additionally, integrating big data analytics to process and analyze the vast amount of data generated from different wine regions could offer unprecedented insights into regional and varietal influences on wine quality. Investigating alternative fermentation techniques and conducting comparative studies across different wine regions could reveal new insights into optimizing wine quality. These efforts should embrace interdisciplinary approaches, combining advanced data analysis, biotechnology, and sensory evaluation to enhance our understanding of wine quality. Such research would not only deepen our knowledge of the factors affecting wine but also support the industry in adapting to evolving challenges and preferences, ultimately enriching the wine production and selection process.
+
