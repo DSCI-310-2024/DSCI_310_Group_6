@@ -11,6 +11,7 @@ format:
     toc-depth: 2
 execute:
   echo: false
+  warning: false
 bibliography: references.bib
 ---
 
@@ -32,21 +33,21 @@ Our approach involved conducting a comprehensive analysis to explore the relatio
 
 ### 3.1 Data Cleaning and Wrangling 
 
-```{r echo=FALSE, include=FALSE}
+```{r echo=FALSE, include=FALSE, message=FALSE}
 library(tidyverse)
 library(dplyr)
 library(GGally)
-install.packages("rsample")
+install.packages("rsample", quietly = TRUE)
 library(rsample)
-install.packages("leaps")
+install.packages("leaps", quietly = TRUE)
 library(leaps)
-install.packages("Metrics")
+install.packages("Metrics", quietly = TRUE)
 library(Metrics)
-install.packages("yardstick")
+install.packages("yardstick", quietly = TRUE)
 library(yardstick)
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 #| vscode: {languageId: r}
 library(tidyverse)
 library(dplyr)
