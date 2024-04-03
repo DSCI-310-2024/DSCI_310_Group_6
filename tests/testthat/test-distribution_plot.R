@@ -21,7 +21,6 @@ test_that("the bar plot should have default features", {
   # Generate the plot
   bar_plot <- distribution_bar(data, "quality")
   
-  # Extract the layer data for the bars
   bar_layer_data <- ggplot2::layer_data(bar_plot, 1) # Assuming geom_bar is the first layer
   
   # Test if the fill is steelblue
@@ -30,7 +29,6 @@ test_that("the bar plot should have default features", {
   # Test if the border color is black
   expect_equal(bar_layer_data$colour[1], "black")
   
-  # If you want to check all the bars, you can use all() function
   expect_true(all(bar_layer_data$fill == "steelblue"))
   expect_true(all(bar_layer_data$colour == "black"))
 })
