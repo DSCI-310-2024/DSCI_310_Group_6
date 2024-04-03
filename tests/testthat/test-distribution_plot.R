@@ -1,6 +1,6 @@
 library(ggplot2)
 library(testthat)
-source("~/Desktop/Projects/DSCI_310_Group_6/R/distribution_bar.R")
+source("../../R/distribution_bar.R")
 
 data <- data.frame(quality=seq(1, 10, length.out = 100))
 
