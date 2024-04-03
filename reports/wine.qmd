@@ -68,8 +68,7 @@ levels(as.factor(wine_data$quality))
 
 ```{r echo=FALSE}
 #| vscode: {languageId: r}
-data2 <- wine_data %>%
-  mutate(quality = ifelse(quality <= 5, "bad", "good"))
+data2 <- quality(wine_data)
 ```
 
 ### 3.2 Exploratory data analysis (EDA)
