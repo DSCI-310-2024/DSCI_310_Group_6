@@ -1,6 +1,9 @@
 library(docopt)
 library(tidyverse)
 
+# Adjust the path to where your clean_data.R file is located
+source("clean/R/clean_data.R")
+
 doc <- "
 Usage:
   02_clean_and_preprocess_data.R --input=<input> --output=<output>
@@ -17,17 +20,9 @@ opts <- docopt(doc)
 input_path <- opts[['--input']]
 output_path <- opts[['--output']]
 
-data <- read.csv(input_path, header = TRUE, sep = ";")
-
 # Data cleaning and preprocessing
-
-cleaned_data <- data %>%
-  # Remove rows with missing values
-  drop_na() %>%
-  # Convert quality to a factor
-  mutate(quality = factor(quality)) %>%
-  # Example transformation: centering and scaling numeric variables
-  mutate_if(is.numeric, scale)
+data <- read.csv(input_path, header = TRUE, sep = ";")
+cleaned_data <- clean_wine_data(data, target_col = 'quality')
 
 # Save the cleaned and preprocessed data
 write.csv(cleaned_data, output_path, row.names = FALSE)
