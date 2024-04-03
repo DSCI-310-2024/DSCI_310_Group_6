@@ -1,9 +1,9 @@
 library(palmerpenguins)
 library(ggplot2)
 library(vdiffr)
-source("../../R/distribution_plot.R")
+source("R/distribution_histogram.R")
 
-penguins_dist <- distribution_plot(penguins, bill_length_mm) +
+penguins_dist <- distribution_histogram(penguins, bill_length_mm) +
   labs(x="Bill length (mm)", y="Count")
 penguins_dist
 
