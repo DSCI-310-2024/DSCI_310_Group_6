@@ -3,6 +3,9 @@ library(ggplot2)
 library(tidyverse)
 library(broom)
 
+# Source the function definition
+source("scatter_plot/function/scatter_plot.R")
+
 doc <- "
 Usage:
   04_modeling_and_results_summary.R --input=<input> --outputprefix=<outputprefix>
@@ -37,11 +40,8 @@ coefficients <- tidy(model)
 # Visualization: Actual vs Predicted Quality
 predictions <- augment(model)
 
-actual_vs_predicted_plot <- ggplot(predictions, aes(x = .fitted, y = quality)) +
-  geom_point(color = 'blue', alpha = 0.6) +
-  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
-  labs(title = "Actual vs Predicted Wine Quality", x = "Predicted Quality", y = "Actual Quality") +
-  theme_minimal()
+# Generate the plot using the custom function
+actual_vs_predicted_plot <- scatter_plot(predictions, ".fitted", "quality", "Actual vs Predicted Wine Quality", "Predicted Quality", "Actual Quality")
 
 # Save the Actual vs Predicted Quality plot
 ggsave(paste0(output_prefix, "_actual_vs_predicted_quality.png"), actual_vs_predicted_plot, width = 8, height = 6)
