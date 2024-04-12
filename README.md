@@ -17,16 +17,13 @@ To emphasize our dedication to reproducibility and trustworthiness, our project 
 ### Prerequisites
 
 - Ensure you have R installed on your system. The project was developed using R version 4.3.2. You can download R from [The Comprehensive R Archive Network (CRAN)](https://cran.r-project.org/).
-
-### Installing `renv`
-
-If you haven't already installed `renv`, you can do so by running the following command in your R console:
-
-```R
-install.packages("renv")
-```
+- Docker is required for running the analysis in a containerized environment. Download Docker from [Docker's official website](https://www.docker.com/).
+  
 
 ### Setting Up the Environment
+
+#### Using Docker
+
 
 1. **Clone the Repository**: If you haven't already, clone the project repository to your local machine using the following command in your terminal:
 
@@ -40,28 +37,36 @@ install.packages("renv")
    cd DSCI_310_Group_6
    ```
 
-3. **Initialize `renv`**: Start the R console in the project directory, then initialize `renv` to install all necessary packages and dependencies:
+3. **Ensure your Docker engine is running** and pull our Docker image locally for the analysis:
 
-   ```R
-   renv::restore()
+   ```
+   docker pull felix12342/dsci310-dockerfile-milestone2:latest
    ```
 
-   This command will read the `renv.lock` file in your project directory and install the R packages and versions specified therein.
 
-### Running the Analysis
+5. **Launch the Analysis Container**: Use Docker Compose to build and run the containerized environment. First clear all previous analysis using ``make clean``.
 
-Once the environment is set up, you can run the analysis by opening the `Wine.ipynb` file in JupyterLab or an equivalent R environment that supports Jupyter notebooks. Ensure you have JupyterLab installed and configured to use the R kernel.
+   ```
+   docker-compose run --rm analysis-env make clean
+   ```
 
-### Updating the Environment
+6. **Run the analysis using ``make all``.**
 
-If you install any new R packages or update existing ones, you should update the `renv.lock` file to reflect these changes. This can be done by running the following command in your R console:
+   ```
+   docker-compose run --rm analysis-env make all
+   ```
 
-```R
-renv::snapshot()
+The rendered pdf and html reports can be found under ``reports/wine.pdf`` and ``reports/wine.html``.
+
+### Running the Tests
+
+To run our tests, do the following:
+
+```
+docker-compose run --rm analysis-env make test
 ```
 
-This command updates the `renv.lock` file, ensuring that other contributors can replicate your environment accurately.
-
+This command should trigger the testthat test scripts.
 
 ## Dependencies
 
@@ -72,9 +77,6 @@ This project relies on several R packages for data manipulation, analysis, and v
 - ggplot
 - docopt
 - broom
-
-## How to Use the Docker Container
-Before using the container, firstly please install and launch Docker on your computer. The Docker image used for this project is based on the quay.io/jupyter/r-notebook:r-4.3.3 image. Additional information can be found in the `Dockerfile`.
 
 
 ## Licenses
