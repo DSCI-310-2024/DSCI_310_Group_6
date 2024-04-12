@@ -37,16 +37,20 @@ To emphasize our dedication to reproducibility and trustworthiness, our project 
    cd DSCI_310_Group_6
    ```
 
-3. **Ensure your Docker engine is running.**
+3. **Ensure your Docker engine is running** and pull our Docker image locally for the analysis:
+
+   ```
+   docker pull felix12342/dsci310-dockerfile-milestone2:latest
+   ```
 
 
-4. **Launch the Analysis Container**: Use Docker Compose to build and run the containerized environment. First clear all previous analysis using ``make clean``.
+5. **Launch the Analysis Container**: Use Docker Compose to build and run the containerized environment. First clear all previous analysis using ``make clean``.
 
    ```
    docker-compose run --rm analysis-env make clean
    ```
 
-5. **Run the analysis using ``make all``.**
+6. **Run the analysis using ``make all``.**
 
    ```
    docker-compose run --rm analysis-env make all
