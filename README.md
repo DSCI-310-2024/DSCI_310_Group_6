@@ -56,12 +56,13 @@ The rendered pdf and html reports can be found under ``reports/wine.pdf`` and ``
 
 ### Running the Tests
 
-**TODO**
-
 To run our tests, do the following:
 
-1. Launch a terminal and install the environment for this project if you don't have it already using:
+```
+docker-compose run --rm analysis-env make test
+```
 
+This command should trigger the testthat test scripts.
 
 ## Dependencies
 
